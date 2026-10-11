@@ -46,7 +46,7 @@ public:
         int next_depth = curr_depth + 1;
 
         if (!explored_depth.count(neighbor) or
-            next_depth < explored_depth[neighbor]) {
+            (depth_limit != -1 and next_depth < explored_depth[neighbor])) {
 
           parent_map[neighbor] = {curr, action};
           explored_depth[neighbor] = next_depth;

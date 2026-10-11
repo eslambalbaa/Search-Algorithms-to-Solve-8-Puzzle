@@ -2,6 +2,7 @@
 
 #include "DFS.hpp"
 #include "State.hpp"
+#include <cstdint>
 
 class Iterative_DFS {
 public:
@@ -10,8 +11,8 @@ public:
 
     SearchResult final_result;
 
-    int total_nodes_expanded = 0;
-    int depth = 0;
+    uint64_t total_nodes_expanded = 0;
+    int64_t depth = 0;
 
     while (true) {
       SearchResult current_result = DFS::dfs(initial_state, goal_state, depth);
