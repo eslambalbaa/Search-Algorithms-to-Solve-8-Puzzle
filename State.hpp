@@ -87,7 +87,6 @@ struct State {
 struct StateHash {
   std::size_t operator()(const State &s) const {
     uint64_t hash = 0;
-    uint16_t x = 1;
     for (uint16_t i = 0; i < BOARD_SIZE; ++i) {
       for (uint16_t j = 0; j < BOARD_SIZE; ++j) {
         hash = (hash << 4) | s.board[i][j];
@@ -102,11 +101,11 @@ struct SearchResult {
 
   std::vector<State> state_path;
 
-  int cost_of_path = 0;
+  uint64_t cost_of_path = 0;
 
-  int nodes_expanded = 0;
+  uint64_t nodes_expanded = 0;
 
-  int search_depth = 0;
+  uint64_t search_depth = 0;
 
   static SearchResult reconstruct_path(
       State goal_node,
