@@ -7,14 +7,15 @@
 class Iterative_DFS {
 public:
   static SearchResult iterative_dfs(const State &initial_state,
-                                    const State &goal_state) {
+                                    const State &goal_state,
+                                    int64_t max_depth = MAX_DEPTH) {
 
     SearchResult final_result;
 
     uint64_t total_nodes_expanded = 0;
     int64_t depth = 0;
 
-    while (true) {
+    while (depth <= max_depth) {
       SearchResult current_result = DFS::dfs(initial_state, goal_state, depth);
 
       total_nodes_expanded += current_result.nodes_expanded;

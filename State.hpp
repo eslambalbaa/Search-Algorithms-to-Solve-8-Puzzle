@@ -10,6 +10,9 @@
 
 constexpr uint16_t BOARD_SIZE = 3;
 
+// proven maximum
+constexpr int64_t MAX_DEPTH = 31;
+
 struct State {
   std::array<std::array<uint16_t, BOARD_SIZE>, BOARD_SIZE> board;
   bool operator==(const State &other) const {
