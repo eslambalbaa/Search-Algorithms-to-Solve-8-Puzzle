@@ -108,9 +108,11 @@ void launch_algorthm(Algorithm choice, State initial_state, State goal_state) {
     break;
   }
 
-  visualize_path(result.state_path);
   auto end_time = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> running_time = end_time - start_time;
+
+  visualize_path(result.state_path);
+
   std::cout << "\n--- Search Results ---\n";
 
   if (!result.path_to_goal.size()) {
