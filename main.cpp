@@ -3,8 +3,10 @@
 #include "DFS.hpp"
 #include "Iterative_DFS.hpp"
 #include "State.hpp"
+#include <chrono>
 #include <cstdint>
-#include <future>
+#include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <vector>
 
@@ -56,6 +58,40 @@ State get_initial_state() {
   return initial_state;
 }
 
+void export_json(const SearchResult &res, const State &initial_state,
+                 double running_time) {
+  std::ofstream out("solution.json");
+
+  if (!out.is_open()) {
+    std::cerr << "Error: Could not open solution.json for writing.\n";
+    return;
+  }
+
+  out << "{\n";
+  out << "  \"initial_board\": [";
+  for (uint16_t i = 0; i < BOARD_SIZE * BOARD_SIZE; ++i) {
+    out << initial_state.board[i / BOARD_SIZE][i % BOARD_SIZE]
+        << (i < (BOARD_SIZE * BOARD_SIZE) - 1 ? ", " : "");
+  }
+  out << "],\n";
+
+  out << "  \"path\": [";
+  for (size_t i = 0; i < res.path_to_goal.size(); ++i) {
+    out << "\"" << res.path_to_goal[i] << "\""
+        << (i < res.path_to_goal.size() - 1 ? ", " : "");
+  }
+  out << "],\n";
+
+  out << "  \"cost\": " << res.cost_of_path << ",\n";
+  out << "  \"nodes_expanded\": " << res.nodes_expanded << ",\n";
+  out << "  \"search_depth\": " << res.search_depth << ",\n";
+  out << "  \"running_time\": " << std::fixed << std::setprecision(8)
+      << running_time << "\n";
+  out << "}\n";
+
+  out.close();
+}
+
 void visualize_path(const std::vector<State> &path) {
   uint32_t n = path.size();
   if (n == 0)
@@ -84,7 +120,8 @@ void visualize_path(const std::vector<State> &path) {
   }
 }
 
-void launch_algorthm(Algorithm choice, State initial_state, State goal_state) {
+void launch_algorithm(Algorithm choice, const State &initial_state,
+                      const State &goal_state) {
   SearchResult result;
   auto start_time = std::chrono::high_resolution_clock::now();
 
@@ -115,7 +152,7 @@ void launch_algorthm(Algorithm choice, State initial_state, State goal_state) {
 
   std::cout << "\n--- Search Results ---\n";
 
-  if (!result.path_to_goal.size()) {
+  if (result.path_to_goal.empty()) {
     std::cout << "No solution found\n";
   }
 
@@ -130,7 +167,10 @@ void launch_algorthm(Algorithm choice, State initial_state, State goal_state) {
   std::cout << "cost of path: " << result.cost_of_path << "\n";
   std::cout << "nodes expanded: " << result.nodes_expanded << "\n";
   std::cout << "search depth: " << result.search_depth << "\n";
-  std::printf("running time: %.8f seconds\n", running_time.count());
+  std::cout << "running time: " << std::fixed << std::setprecision(8)
+            << running_time.count() << " seconds\n";
+
+  export_json(result, initial_state, running_time.count());
 }
 
 int main() {
@@ -141,5 +181,5 @@ int main() {
 
   State initial_state = get_initial_state();
 
-  launch_algorthm(choice, initial_state, goal_state);
+  launch_algorithm(choice, initial_state, goal_state);
 }
