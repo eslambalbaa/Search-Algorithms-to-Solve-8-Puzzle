@@ -29,6 +29,7 @@ public:
       depth++;
     }
 
+    final_result.nodes_expanded = total_nodes_expanded;
     return final_result;
   }
 };
