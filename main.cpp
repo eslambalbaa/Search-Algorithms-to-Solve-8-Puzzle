@@ -1,8 +1,8 @@
-#include "A_star.hpp"
-#include "BFS.hpp"
-#include "DFS.hpp"
-#include "Iterative_DFS.hpp"
-#include "State.hpp"
+#include "algorithms/A_star.hpp"
+#include "algorithms/BFS.hpp"
+#include "algorithms/DFS.hpp"
+#include "algorithms/Iterative_DFS.hpp"
+#include "algorithms/State.hpp"
 #include <chrono>
 #include <cstdint>
 #include <fstream>
