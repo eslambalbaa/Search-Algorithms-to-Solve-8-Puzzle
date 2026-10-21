@@ -147,30 +147,28 @@ void launch_algorithm(Algorithm choice, const State &initial_state,
 
   auto end_time = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> running_time = end_time - start_time;
-
-  visualize_path(result.state_path);
-
-  std::cout << "\n--- Search Results ---\n";
-
-  if (result.path_to_goal.empty()) {
-    std::cout << "No solution found\n";
-  }
-
-  std::cout << "path to goal: [";
-  for (size_t i = 0; i < result.path_to_goal.size(); ++i) {
-    std::cout << "'" << result.path_to_goal[i] << "'";
-    if (i < result.path_to_goal.size() - 1)
-      std::cout << ", ";
-  }
-  std::cout << "]\n";
-
-  std::cout << "cost of path: " << result.cost_of_path << "\n";
-  std::cout << "nodes expanded: " << result.nodes_expanded << "\n";
-  std::cout << "search depth: " << result.search_depth << "\n";
-  std::cout << "running time: " << std::fixed << std::setprecision(8)
-            << running_time.count() << " seconds\n";
-
   export_json(result, initial_state, running_time.count());
+  // visualize_path(result.state_path);
+
+  // std::cout << "\n--- Search Results ---\n";
+
+  // if (result.path_to_goal.empty()) {
+  //   std::cout << "No solution found\n";
+  // }
+
+  // std::cout << "path to goal: [";
+  // for (size_t i = 0; i < result.path_to_goal.size(); ++i) {
+  //   std::cout << "'" << result.path_to_goal[i] << "'";
+  //   if (i < result.path_to_goal.size() - 1)
+  //     std::cout << ", ";
+  // }
+  // std::cout << "]\n";
+
+  // std::cout << "cost of path: " << result.cost_of_path << "\n";
+  // std::cout << "nodes expanded: " << result.nodes_expanded << "\n";
+  // std::cout << "search depth: " << result.search_depth << "\n";
+  // std::cout << "running time: " << std::fixed << std::setprecision(8)
+  //           << running_time.count() << " seconds\n";
 }
 
 int main() {
