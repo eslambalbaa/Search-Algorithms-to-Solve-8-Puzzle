@@ -431,7 +431,7 @@
             transition: transform .4s cubic-bezier(.34, 1.56, .64, 1);
         }
 
-        /* once you swap to transparent PNGs, set TRANSPARENT_IMAGES = true in the script */
+
         .patrick-wrap.transparent .patrick-frame {
             background: none;
             border: 0;

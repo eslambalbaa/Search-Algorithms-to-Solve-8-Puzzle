@@ -1,6 +1,6 @@
         /* ---------- config ---------- */
         const IMAGES = {
-            idle: 'assets/idle.jfif',        // swap for transparent PNG/WebP when you have them
+            idle: 'assets/idle.jfif',
             busy: 'assets/animating.jfif',
             happy: 'assets/happy.jfif'
         };
