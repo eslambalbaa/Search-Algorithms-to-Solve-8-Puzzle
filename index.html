@@ -12,11 +12,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<script>
-  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/insights/script.js"></script>
-
 <body>
     <div class="sky" aria-hidden="true"></div>
     <div class="tint" aria-hidden="true"></div>
@@ -92,7 +87,10 @@
             <div class="trace-list" id="traceList"></div>
         </section>
     </main>
-
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
     <script src="app.js" defer></script>
 </body>
 
