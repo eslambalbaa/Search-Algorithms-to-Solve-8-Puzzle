@@ -581,6 +581,67 @@
             document.documentElement.style.setProperty('--move-ms', SPEEDS_MS[speedEl.value] + 'ms'));
         document.documentElement.style.setProperty('--move-ms', SPEEDS_MS[speedEl.value] + 'ms');
 
+        /* ---------- wasm solver worker ---------- */
+        let solverWorker = null;
+        let workerReqId = 0;
+
+        function ensureWorker() {
+            if (!solverWorker) {
+                solverWorker = new Worker('solver_worker.js', { type: 'module' });
+            }
+            return solverWorker;
+        }
+
+        function resetWorker() {
+            if (solverWorker) {
+                solverWorker.terminate();
+                solverWorker = null;
+            }
+        }
+
+        function solveWithWasm(algo, board, signal) {
+            return new Promise((resolve, reject) => {
+                if (signal && signal.aborted) {
+                    reject(new DOMException('Aborted', 'AbortError'));
+                    return;
+                }
+
+                const worker = ensureWorker();
+                const id = ++workerReqId;
+
+                const cleanup = () => {
+                    worker.removeEventListener('message', onMessage);
+                    worker.removeEventListener('error', onError);
+                    if (signal) signal.removeEventListener('abort', onAbort);
+                };
+
+                const onMessage = (e) => {
+                    if (!e.data || e.data.id !== id) return;
+                    cleanup();
+                    if (e.data.error) reject(new Error(e.data.error));
+                    else resolve(e.data.data);
+                };
+
+                const onError = (e) => {
+                    cleanup();
+                    resetWorker();
+                    reject(new Error(e.message || 'WebAssembly solver error'));
+                };
+
+                const onAbort = () => {
+                    cleanup();
+                    resetWorker();
+                    reject(new DOMException('Aborted', 'AbortError'));
+                };
+
+                worker.addEventListener('message', onMessage);
+                worker.addEventListener('error', onError);
+                if (signal) signal.addEventListener('abort', onAbort, { once: true });
+
+                worker.postMessage({ id, algo, board });
+            });
+        }
+
         /* ---------- run ---------- */
         let runId = 0, abortCtl = null, wake = null;
         const stopBtn = $('stopBtn');
@@ -616,14 +677,7 @@
             setStatus('Patrick is thinking…');
 
             try {
-                const response = await fetch('/run', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ algo: algoSelect.value, board: boardInput.value.trim() }),
-                    signal: abortCtl.signal
-                });
-                if (!response.ok) throw new Error('Execution failed');
-                const data = await response.json();
+                const data = await solveWithWasm(algoSelect.value, boardInput.value.trim(), abortCtl.signal);
                 if (stopped()) { setPatrick('idle'); setStatus('Stopped.'); return; }
                 updateStats(data);
                 if (Array.isArray(data.initial_board) && Array.isArray(data.path)) loadTrace(data.initial_board, data.path);
@@ -665,7 +719,7 @@
                 } else {
                     console.error(err);
                     setPatrick('idle');
-                    setStatus('Could not reach the solver. Check that server.py is running and output/main.exe exists.', true);
+                    setStatus('Solver failed to run in WebAssembly. Check the browser console for details.', true);
                 }
             } finally {
                 abortCtl = null;
